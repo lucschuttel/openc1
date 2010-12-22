@@ -1,6 +1,5 @@
 #summary How to build from the source code
 
-How to build from the source code:
 
 = Prerequisites =
  * Visual Studio 2008 (at least C# Express) or later
