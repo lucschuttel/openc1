@@ -1,0 +1,12 @@
+﻿// -- OpenC1 settings file v1.3 --
+//
+
+// Path to load data from. 
+c:\games\openc1\data			
+
+// If you choose to use a different data folder than the official OpenC1 data folder from 1amStudios, 
+// you must check the license.txt first and ensure you comply with the terms contained within.							
+								
+35								// Draw distance
+false							// Full screen (true / false)
+false							// Fog disabled
