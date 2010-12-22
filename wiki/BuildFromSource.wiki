@@ -1,0 +1,19 @@
+#summary How to build
+
+= Introduction =
+
+How to build from source code
+
+= Prerequisites =
+ * Visual Studio 2008 (at least C# Express) or later
+ * XNA SDK 3.1
+ * Nvidia PhysX SDK 2.7.3
+
+
+= Details =
+
+  * Install the m42 font in the source code root. (youll need to restart Visual Studio)
+  * Open OpenC1.sln
+  * Build
+  * Set correct path to data folder in OpenC1Settings.txt
+  * Run!
