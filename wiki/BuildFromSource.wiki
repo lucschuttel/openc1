@@ -1,3 +1,5 @@
+#summary How to build from the source code
+
 How to build from the source code:
 
 = Prerequisites =
