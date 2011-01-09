@@ -2,7 +2,7 @@
 //
 
 // Path to load data from. 
-c:\games\carmdemo\data			
+c:\games\openc1\data			
 
 // If you choose to use a different data folder than the official OpenC1 data folder from 1amStudios, 
 // you must check the license.txt first and ensure you comply with the terms contained within.							
