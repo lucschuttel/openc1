@@ -6,6 +6,7 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Graphics;
+using OneAmEngine;
 
 namespace OpenC1.Parsers
 {
@@ -30,6 +31,8 @@ namespace OpenC1.Parsers
             }
             _file.BaseStream.Position = 0;
             _file.DiscardBufferedData();
+
+            Logger.Log("Opened " + filename);
         }
 
         public void CloseFile()

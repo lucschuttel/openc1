@@ -25,7 +25,8 @@ namespace OpenC1
         public static int NbrSectionsRendered = 0;
         public static int NbrSectionsChecked = 0;
         public static int NbrDrawCalls = 0;
-        public static bool CullingDisabled { get; set; }
+        public static bool CullingOff { get; set; }
+        public static bool ForceCullModeOff;
         public static Color FogColor;
         public static string BasePath;
         public static BasicEffect2 CurrentEffect;

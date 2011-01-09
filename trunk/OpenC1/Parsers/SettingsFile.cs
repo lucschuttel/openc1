@@ -27,6 +27,7 @@ namespace OpenC1.Parsers
 
             GameVars.FullScreen = ReadLineAsBool();
             GameVars.DisableFog = ReadLineAsBool();
+            GameVars.ForceCullModeOff = ReadLineAsBool();
             
             CloseFile();
         }

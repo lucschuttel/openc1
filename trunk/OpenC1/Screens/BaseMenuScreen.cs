@@ -105,7 +105,7 @@ namespace OpenC1.Screens
 
             Vector2 pos = BaseHUDItem.ScaleVec2(0.01f, 0.96f);
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
-            Engine.SpriteBatch.DrawString(Engine.ContentManager.Load<SpriteFont>("content/M42"), "Open C1 v" + v.Major + "." + v.Minor + " - " + GameVars.BasePath , pos, Color.Red, 0, Vector2.Zero, 1.1f, SpriteEffects.None, 0);
+            Engine.SpriteBatch.DrawString(Engine.ContentManager.Load<SpriteFont>("content/M42"), "Open C1 v" + v.Major + "." + v.Minor + "." + v.Build + " - " + GameVars.BasePath , pos, Color.Red, 0, Vector2.Zero, 1.1f, SpriteEffects.None, 0);
 
             if (ShouldRenderOptions())
             {

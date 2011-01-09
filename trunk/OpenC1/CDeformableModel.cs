@@ -424,10 +424,10 @@ namespace OpenC1
                 Polygon poly = Polygons[i];
                 if (poly.Skip) continue;
 
-                if (GameVars.CullingDisabled != poly.DoubleSided)
+                if (!GameVars.ForceCullModeOff && GameVars.CullingOff != poly.DoubleSided)
                 {
                     device.RenderState.CullMode = (poly.DoubleSided ? CullMode.None : CullMode.CullClockwiseFace);
-                    GameVars.CullingDisabled = poly.DoubleSided;
+                    GameVars.CullingOff = poly.DoubleSided;
                 }
 
                 if (poly.Material != null)
@@ -460,14 +460,6 @@ namespace OpenC1
             }
 
             device.Vertices[0].SetSource(verts, 0, VertexPositionNormalTexture.SizeInBytes);
-
-            //for (int i = 0; i < _localVertices.Length; i++)
-            //{
-            //    var ver = _localVertices[i];
-            //    Vector3 lineEnd = ver.Position + (ver.Normal * 1f);
-            //    Engine.DebugRenderer.AddLine(Vector3.Transform(ver.Position, GameVars.ScaleMatrix*_actor.GlobalPose),
-            //        Vector3.Transform(lineEnd, GameVars.ScaleMatrix * _actor.GlobalPose), Color.Yellow);
-            //}
         }
 
         internal Vector3 GetMostDamagedPosition()

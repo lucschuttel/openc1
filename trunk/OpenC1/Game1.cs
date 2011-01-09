@@ -84,7 +84,7 @@ namespace OpenC1
 
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            File.WriteAllText("crash.log", e.ExceptionObject.ToString());
+            Logger.Log("CRASH:\r\n" + e.ExceptionObject.ToString());
         }
 
         /// <summary>
