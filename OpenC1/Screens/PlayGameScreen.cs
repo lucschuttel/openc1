@@ -88,7 +88,7 @@ namespace OpenC1
         {
             Engine.Device.Clear(GameVars.FogColor);
             GameVars.NbrDrawCalls = 0;
-            if (GameVars.CullingDisabled)
+            if (GameVars.ForceCullModeOff || GameVars.CullingOff)
                 Engine.Device.RenderState.CullMode = CullMode.None;
             else
                 Engine.Device.RenderState.CullMode = CullMode.CullClockwiseFace;

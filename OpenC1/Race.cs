@@ -12,6 +12,7 @@ using OpenC1.Gfx;
 using Microsoft.Xna.Framework.Input;
 using OpenC1.GameModes;
 using OneAmEngine;
+using System.IO;
 
 namespace OpenC1
 {
@@ -35,6 +36,8 @@ namespace OpenC1
         public Race(string filename, string playerVehicleFile)
         {
             Race.Current = this;
+
+            Logger.Log("Starting race " + Path.GetFileName(filename));
 
             ConfigFile = new RaceFile(filename);
 
