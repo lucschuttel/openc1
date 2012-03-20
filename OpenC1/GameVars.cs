@@ -6,15 +6,17 @@ using Microsoft.Xna.Framework;
 using OneAmEngine;
 using OpenC1.Gfx;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 
 namespace OpenC1
 {
-    enum EmulationMode
-    {
-        Demo,
-        Full,
-        SplatPack
-    }
+	enum EmulationMode
+	{
+		Demo,
+		Full,
+		SplatPackDemo,
+		SplatPack
+	}
 
     static class GameVars
     {
@@ -26,19 +28,34 @@ namespace OpenC1
         public static int NbrSectionsChecked = 0;
         public static int NbrDrawCalls = 0;
         public static bool CullingOff { get; set; }
-        public static bool ForceCullModeOff;
         public static Color FogColor;
         public static string BasePath;
         public static BasicEffect2 CurrentEffect;
         public static ParticleEmitter SparksEmitter;
-        public static bool LightingEnabled = true;
         public static string SelectedCarFileName;
         public static RaceInfo SelectedRaceInfo;
         public static Texture2D SelectedRaceScene;
         public static EmulationMode Emulation;
         public static int SkillLevel = 1;
         public static bool FullScreen;
-        public static bool DisableFog;
+
+		public static void DetectEmulationMode()
+		{
+			if (File.Exists(GameVars.BasePath + "RACES\\CASTLE.TXT") || File.Exists(GameVars.BasePath + "RACES\\TINSEL.TXT"))
+			{
+				if (!File.Exists(GameVars.BasePath + "NETRACES.TXT"))
+					GameVars.Emulation = EmulationMode.SplatPackDemo;
+				else
+					GameVars.Emulation = EmulationMode.SplatPack;
+			}
+			else
+			{
+				if (!File.Exists(GameVars.BasePath + "NETRACES.TXT"))
+					GameVars.Emulation = EmulationMode.Demo;
+				else
+					GameVars.Emulation = EmulationMode.Full;
+			}
+		}
         
     }
 }

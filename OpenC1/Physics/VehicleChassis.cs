@@ -43,7 +43,7 @@ namespace OpenC1.Physics
 
             Wheels = new List<VehicleWheel>();
 
-            CarFile carFile = vehicle.Config;
+            VehicleFile carFile = vehicle.Config;
             
             ActorDescription actorDesc = new ActorDescription();
 
@@ -349,7 +349,7 @@ namespace OpenC1.Physics
             else
             {
                 _motorTorque = 0.0f;
-                _brakeTorque = Math.Max(750, _brakeTorque + 0.9f);
+                _brakeTorque = Math.Max(870, _brakeTorque + 0.9f);
             }
             UpdateTorque();
             //_physXActor.WakeUp();

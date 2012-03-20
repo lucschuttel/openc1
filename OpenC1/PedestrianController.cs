@@ -11,8 +11,8 @@ namespace OpenC1
 {
     class PedestrianController
     {
-        static List<PedestrianBehaviour> _behaviours;
-        static List<PixMap> _pixMaps = new List<PixMap>();
+        List<PedestrianBehaviour> _behaviours;
+        List<PixMap> _pixMaps = new List<PixMap>();
 
         List<Pedestrian> _peds;
         public int Count;
@@ -38,7 +38,7 @@ namespace OpenC1
 
                 ped.Initialize();
 
-                if (ped.RefNumber < 100)
+                if (!ped.IsPowerup)
                     Count++;
             }
         }
@@ -91,7 +91,7 @@ namespace OpenC1
             for (int i = 0; i < _peds.Count; i++)
             {
                 Pedestrian ped = _peds[i];
-                if (ped.RefNumber >= 100)
+                if (ped.IsPowerup)
                 {
                     // remove used powerups & mines
                     if (ped._stopUpdating)
@@ -120,9 +120,8 @@ namespace OpenC1
         {
             Engine.Device.Vertices[0].SetSource(_vertexBuffer, 0, VertexPositionTexture.SizeInBytes);
             Engine.Device.VertexDeclaration = _vertexDeclaration;
-            GameVars.CurrentEffect.LightingEnabled = false;
             Engine.Device.RenderState.CullMode = CullMode.None;
-            Engine.Device.RenderState.ReferenceAlpha = 100;
+			Engine.Device.RenderState.ReferenceAlpha = 100;
 
             GameVars.CurrentEffect.CurrentTechnique.Passes[0].Begin();
 
@@ -133,7 +132,6 @@ namespace OpenC1
             }
 
             GameVars.CurrentEffect.CurrentTechnique.Passes[0].End();
-            GameVars.CurrentEffect.LightingEnabled = true;
         }
 
         private void CreateGeometry()

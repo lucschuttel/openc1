@@ -74,6 +74,7 @@ namespace OpenC1.Physics
                                             ((CpuDriver)vehicle2.Driver).OnPlayerHit(force);
                                         }
 
+										// stop cars rearing up if they are both trying to push each other.
                                         if (vehicle.Chassis.Wheels.Find(a => !a.IsRear && a.InAir) != null)
                                         {
                                             vehicle.Chassis.Actor.AddForceAtPosition(Vector3.Down * 0.35f * force, pos, ForceMode.Force);
@@ -132,6 +133,8 @@ namespace OpenC1.Physics
                 return;
             }
 
+			nonCar.LastVehicleToHit = vehicle;
+
             if (nonCar.IsAttached)
             {
                 if (normalforce == Vector3.Zero) return;
@@ -150,7 +153,6 @@ namespace OpenC1.Physics
                 nonCar.Rotation.X += -directedForce.X * factor;
                 nonCar.Rotation.Z += directedForce.Z * factor;
 
-                nonCar.Hit = true;
                 nonCar.LastTouchTime = Engine.TotalSeconds;
                 nonCar.LastForcePosition = pos;
                 nonCar.LastForce = directedForce;

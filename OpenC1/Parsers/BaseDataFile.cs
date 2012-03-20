@@ -27,10 +27,7 @@ namespace OpenC1.Parsers
             _pixPaths.Add(GameVars.BasePath + "32X20X8\\pixelmap\\");
 
             _pixFontPaths = new List<string>();
-            if (GameVars.Emulation != EmulationMode.Demo)
-            {
-                _pixFontPaths.Add(GameVars.BasePath + "64X48X8\\fonts\\");
-            }
+            _pixFontPaths.Add(GameVars.BasePath + "64X48X8\\fonts\\");
             _pixFontPaths.Add(GameVars.BasePath + "32X20X8\\fonts\\");
             _pixFontPaths.Add(GameVars.BasePath + "32X20X8\\pixelmap\\");
 
@@ -40,7 +37,7 @@ namespace OpenC1.Parsers
 
             _fliPaths = new List<string>();
             _fliPaths.Add(GameVars.BasePath + "anim\\");
-            _fliPaths.Add(GameVars.BasePath + "32x20x8\\anim\\");
+            _fliPaths.Add(GameVars.BasePath + "32X20X8\\anim\\");
         }
 
         protected Stream OpenDataFile(string filename)
@@ -64,8 +61,10 @@ namespace OpenC1.Parsers
                 foreach (string path in _pixPaths)
                 {
                     fullname = path + filename;
-                    if (File.Exists(fullname))
-                        return fullname;
+					if (File.Exists(fullname))
+					{
+						return fullname;
+					}
                 }
                 Debug.WriteLine("File not found: " + filename);
                 Exists = false;
@@ -100,8 +99,8 @@ namespace OpenC1.Parsers
                 foreach (string path in _fliPaths)
                 {
                     fullname = path + filename;
-                    if (File.Exists(fullname))
-                        return fullname;
+					if (File.Exists(fullname))
+						return fullname;
                 }
                 Debug.WriteLine("File not found: " + filename);
                 Exists = false;

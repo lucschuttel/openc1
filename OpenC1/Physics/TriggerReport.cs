@@ -47,7 +47,6 @@ namespace OpenC1.Physics
                 }
                 else if (triggerShape.Actor.UserData is Pedestrian)
                 {
-                    vehicle.LastRunOverPedTime = Engine.TotalSeconds;
                     Race.Current.OnPedestrianHit((Pedestrian)triggerShape.Actor.UserData, vehicle);
                 }
             }
@@ -55,17 +54,23 @@ namespace OpenC1.Physics
             {
                 NonCar noncar = otherShape.Actor.UserData as NonCar;
 
-                // if the trigger is a noncar that was hit within 5 seconds
-                if (triggerShape.Actor.UserData is Pedestrian && noncar.LastTouchTime + 10f > Engine.TotalSeconds)
+                // if the trigger is a noncar that was hit within 7 seconds
+                if (triggerShape.Actor.UserData is Pedestrian && noncar.LastTouchTime + 7f > Engine.TotalSeconds)
                 {
                     Pedestrian ped = (Pedestrian)triggerShape.Actor.UserData;
                     if (!ped.IsHit)
                     {
-                        Race.Current.OnPedestrianHit(ped, Race.Current.PlayerVehicle);  //assume player
-                        if (GameVars.Emulation == EmulationMode.Demo)
-                            MessageRenderer.Instance.PostHeaderMessage("Nice shot, sir!", 3);
-                        else
-                            MessageRenderer.Instance.PostMainMessage("billiard.pix", 3, 0.7f, 0.003f, 1.4f);
+						if (noncar.LastVehicleToHit != null)
+						{
+							Race.Current.OnPedestrianHit(ped, noncar.LastVehicleToHit);
+							if (noncar.LastVehicleToHit.Driver is PlayerDriver)
+							{
+								if (GameVars.Emulation == EmulationMode.Demo)  // billiard.pix doesn't exist in c1 demo
+									MessageRenderer.Instance.PostHeaderMessage("Nice shot, sir!", 3);
+								else
+									MessageRenderer.Instance.PostMainMessage("billiard.pix", 3, 0.7f, 0.003f, 1.4f);
+							}
+						}
                     }
                 }
             }

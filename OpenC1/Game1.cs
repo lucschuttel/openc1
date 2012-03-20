@@ -42,14 +42,14 @@ namespace OpenC1
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
-            SettingsFile settings = new SettingsFile();  //load open1settings.txt
+            SettingsFile settings = new SettingsFile();  //load openc1settings.txt
 
             Engine.ScreenSize = new Vector2(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
 
             _graphics.IsFullScreen = GameVars.FullScreen;
             //_graphics.SynchronizeWithVerticalRetrace = false;
 
-            _graphics.MinimumVertexShaderProfile = ShaderProfile.VS_2_0;
+            _graphics.MinimumVertexShaderProfile = ShaderProfile.VS_1_1;
             _graphics.MinimumPixelShaderProfile = ShaderProfile.PS_2_0;
         }
 
@@ -102,13 +102,11 @@ namespace OpenC1
             Engine.DrawDistance = GameVars.DrawDistance;
             Engine.Audio = new MdxSoundEngine();
 
-
-            //enable per-pixel transparency
-            Engine.Device.RenderState.AlphaTestEnable = true;
-            Engine.Device.RenderState.ReferenceAlpha = 200;
-            Engine.Device.RenderState.AlphaFunction = CompareFunction.Greater;
-
-            Engine.Screen = new DataInfoScreen(null);
+			string gameDataPath = "GameData";
+			if (!Directory.Exists(gameDataPath) || Directory.GetDirectories(gameDataPath).Length == 0)
+				Engine.Screen = new ChooseDownloadGameDataScreen(null);
+			else
+				Engine.Screen = new GameSelectionScreen(null);
         }
 
         /// <summary>
