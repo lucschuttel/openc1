@@ -35,6 +35,7 @@ namespace OpenC1
         private float _groundHeight;        
         private float _hitSpeed, _hitSpinSpeed, _hitUpSpeed, _hitCurrentSpin;
         private bool _isFalling;
+		private Vector3 _hitVelocity;
         
         public bool _stopUpdating;
 
@@ -100,11 +101,17 @@ namespace OpenC1
                 if (Engine.Random.Next() % 2 == 0) _hitSpinSpeed *= -1;
                 _hitUpSpeed = speed * 0.10f;
                 _hitSpeed = speed * Behaviour.Acceleration * 10000;
+				if (!IsPowerup)
+					PedestrianGibsController.AddGibs(Position + new Vector3(0, 1.2f, 0), vehicle.Chassis.Actor.LinearVelocity, speed);
             }
             else
             {
+				if (!IsPowerup && speed > 30)
+					PedestrianGibsController.AddGibs(Position + new Vector3(0, 0.5f, 0), vehicle.Chassis.Actor.LinearVelocity, speed);
                 _hitSpeed = speed * Behaviour.Acceleration * 19000;
             }
+			
+			
             _direction = Vector3.Normalize(vehicle.Chassis.Actor.LinearVelocity);
             if (float.IsNaN(_direction.X))
             {
@@ -302,17 +309,20 @@ namespace OpenC1
             Matrix world = Matrix.CreateConstrainedBillboard(Position, Engine.Camera.Position, Vector3.Up, null, null);
 
             PedestrianFrame frame = _inLoopingFrames ? _currentSequence.LoopingFrames[_frameIndex] : _currentSequence.InitialFrames[_frameIndex];
-            Vector3 texSize = new Vector3(50, 70, 1);
-            if (frame.Texture != null) texSize = new Vector3(frame.Texture.Width, frame.Texture.Height, 1);
-            texSize /= Math.Max(texSize.X, texSize.Y);
-            Vector3 scale = texSize * new Vector3(Behaviour.Height, Behaviour.Height, 1);
+			if (frame.Texture == null) return;
 
+            Vector3 scale = new Vector3(frame.Texture.Width, frame.Texture.Height, 1);
+            if (!IsPowerup)
+                scale *= 0.015f;
+            else
+                scale *= 0.02f;
+   
             if (frame.Flipped)
             {
                 world = Matrix.CreateRotationY(MathHelper.Pi) * world;
             }
 
-            world = Matrix.CreateScale(scale) * Matrix.CreateRotationZ(_hitCurrentSpin) * world * Matrix.CreateTranslation(frame.Offset) *Matrix.CreateTranslation(0, scale.Y * 0.5f, 0);
+            world = Matrix.CreateScale(scale) * Matrix.CreateRotationZ(_hitCurrentSpin) * world * Matrix.CreateTranslation(frame.Offset) * Matrix.CreateTranslation(0, scale.Y * 0.5f, 0);
 
             BasicEffect2 effect = GameVars.CurrentEffect;
             effect.World = world;
@@ -320,6 +330,14 @@ namespace OpenC1
             effect.CommitChanges();
             Engine.Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
         }
+
+		public bool IsPowerup
+		{
+			get
+			{
+				return RefNumber >= 100;
+			}
+		}
     }
 
     class PedestrianInstruction

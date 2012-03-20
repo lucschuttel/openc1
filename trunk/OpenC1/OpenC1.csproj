@@ -12,7 +12,8 @@
     <XnaPlatform>Windows</XnaPlatform>
     <XnaCrossPlatformGroupID>d21e1db0-0b1c-4adf-81c3-7340137f9eeb</XnaCrossPlatformGroupID>
     <ApplicationIcon>Game.ico</ApplicationIcon>
-    <Thumbnail>GameThumbnail.png</Thumbnail>
+    <Thumbnail>
+    </Thumbnail>
     <XnaUpgrade>
     </XnaUpgrade>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
@@ -64,6 +65,7 @@
     <XnaCompressContent>True</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d" />
     <Reference Include="mscorlib">
@@ -98,11 +100,12 @@
     <Compile Include="FontRenderer.cs" />
     <Compile Include="GameModes\FlyMode.cs" />
     <Compile Include="GameModes\GameMode.cs" />
-    <Compile Include="GameModes\NormalMode.cs" />
+    <Compile Include="GameModes\StandardGameMode.cs" />
     <Compile Include="GameModes\OpponentEditMode.cs" />
     <Compile Include="GameModes\PedEditMode.cs" />
     <Compile Include="GameModes\RaceCompletedMode.cs" />
     <Compile Include="Gfx\DamageSmokeParticleSystem.cs" />
+    <Compile Include="Gfx\PedestrianGibsParticleSystem.cs" />
     <Compile Include="Gfx\PixMapFont.cs" />
     <Compile Include="GridPlacer.cs" />
     <Compile Include="IDriver.cs" />
@@ -135,9 +138,10 @@
     <Compile Include="PlayerDriver.cs" />
     <Compile Include="RaceMap.cs" />
     <Compile Include="RaceTimeController.cs" />
-    <Compile Include="RotatingCamera.cs" />
     <Compile Include="Screens\BaseMenuScreen.cs" />
-    <Compile Include="Screens\DataInfoScreen.cs" />
+    <Compile Include="Screens\ChooseDownloadDataScreen.cs" />
+    <Compile Include="Screens\DownloadGameDataScreen.cs" />
+    <Compile Include="Screens\GameSelectionScreen.cs" />
     <Compile Include="Screens\LoadRaceScreen.cs" />
     <Compile Include="Screens\MainMenuScreen.cs" />
     <Compile Include="Screens\MenuOption.cs" />
@@ -194,7 +198,7 @@
     <Compile Include="Parsers\ActFile.cs" />
     <Compile Include="Parsers\BaseDataFile.cs" />
     <Compile Include="Parsers\BaseTextFile.cs" />
-    <Compile Include="Parsers\CarFile.cs" />
+    <Compile Include="Parsers\VehicleFile.cs" />
     <Compile Include="Parsers\MatFile.cs" />
     <Compile Include="Parsers\DatFile.cs" />
     <Compile Include="Parsers\PaletteFile.cs" />
@@ -213,7 +217,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
-    <Content Include="GameThumbnail.png" />
+    <Content Include="Lib\Ionic.Zip.Reduced.dll" />
     <Content Include="Lib\NxCooking.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -221,6 +225,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Lib\StillDesign.PhysX.Net.dll" />
+    <Content Include="license.txt" />
     <Content Include="OpenC1Settings.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

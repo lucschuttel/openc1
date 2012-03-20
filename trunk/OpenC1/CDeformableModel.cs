@@ -21,7 +21,7 @@ namespace OpenC1
 
         public Actor _actor;
 
-        DynamicVertexBuffer _vertexBuffer;
+        VertexBuffer _vertexBuffer;
         IndexBuffer _indexBuffer;
 
         List<int>[] _vertexLinks;
@@ -31,12 +31,12 @@ namespace OpenC1
         bool _changed;
         
         List<int> _lastHitPts = new List<int>();
+        public VehicleFile _carFile;
 
-        public CarFile _carFile;
 
         public override void Resolve(List<ushort> indices, List<VertexPositionNormalTexture> vertices, List<Vector2> vertexTextureMap, List<Vector3> vertexPositions)
         {
-            List<int> indices2 = new List<int>();
+			List<UInt16> indices2 = new List<UInt16>();
 
             foreach (Polygon poly in Polygons)
             {
@@ -120,10 +120,10 @@ namespace OpenC1
                 _localVertices[i].Normal.Normalize();
 
             int size = VertexPositionNormalTexture.SizeInBytes * _localVertices.Length;
-            _vertexBuffer = new DynamicVertexBuffer(Engine.Device, size, BufferUsage.WriteOnly);
+            _vertexBuffer = new VertexBuffer(Engine.Device, size, BufferUsage.WriteOnly);
             _vertexBuffer.SetData(_localVertices);
 
-            _indexBuffer = new IndexBuffer(Engine.Device, typeof(int), indices2.Count, BufferUsage.WriteOnly);
+            _indexBuffer = new IndexBuffer(Engine.Device, typeof(UInt16), indices2.Count, BufferUsage.WriteOnly);
             _indexBuffer.SetData(indices2.ToArray());
 
         }
@@ -223,6 +223,9 @@ namespace OpenC1
 
                     foreach (CrushPoint point in data.Points)
                     {
+						if (point.VertexIndex < 0)
+							continue;
+
                         if (float.IsNaN(normalforce.X) || float.IsNaN(normalforce.Y) || float.IsNaN(normalforce.Z))
                         {
                             break;
@@ -410,11 +413,12 @@ namespace OpenC1
 
             GraphicsDevice device = Engine.Device;
 
-            VertexBuffer verts = device.Vertices[0].VertexBuffer;
+            //VertexBuffer oldVertBuffer = device.Vertices[0].VertexBuffer;
+			//IndexBuffer oldIndexBuffer = device.Indices;
 
             device.Vertices[0].SetSource(_vertexBuffer, 0, VertexPositionNormalTexture.SizeInBytes);
             device.Indices = _indexBuffer;
-
+			
             CMaterial currentMaterial = null;
             int baseVert = 0; // VertexBaseIndex;
             int indexBufferStart = 0; // IndexBufferStart;
@@ -424,7 +428,7 @@ namespace OpenC1
                 Polygon poly = Polygons[i];
                 if (poly.Skip) continue;
 
-                if (!GameVars.ForceCullModeOff && GameVars.CullingOff != poly.DoubleSided)
+                if (GameVars.CullingOff != poly.DoubleSided)
                 {
                     device.RenderState.CullMode = (poly.DoubleSided ? CullMode.None : CullMode.CullClockwiseFace);
                     GameVars.CullingOff = poly.DoubleSided;
@@ -448,7 +452,7 @@ namespace OpenC1
                     currentMaterial.Funk.BeforeRender();
                 }
                 GameVars.NbrDrawCalls++;
-                Engine.Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, baseVert, 0, 3 * poly.NbrPrims, indexBufferStart, poly.NbrPrims);
+				Engine.Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, baseVert, 0, _localVertices.Length, indexBufferStart, poly.NbrPrims);
 
                 indexBufferStart += poly.NbrPrims * 3;
 
@@ -458,8 +462,9 @@ namespace OpenC1
                     currentMaterial.Funk.AfterRender();
                 }
             }
-
-            device.Vertices[0].SetSource(verts, 0, VertexPositionNormalTexture.SizeInBytes);
+            
+			//device.Vertices[0].SetSource(oldVertBuffer, 0, VertexPositionNormalTexture.SizeInBytes);
+			//device.Indices = oldIndexBuffer;
         }
 
         internal Vector3 GetMostDamagedPosition()

@@ -25,7 +25,11 @@ namespace OpenC1.Parsers
             if (firstline.StartsWith("@"))
             {
                 _file.Close();
-                byte[] decrypted = TextFileDecryptor.DecryptDemoFile(filename);
+				byte[] decrypted;
+				if (GameVars.Emulation == EmulationMode.Demo)
+					decrypted = TextFileDecryptor.DecryptDemoFile(filename);
+				else
+					decrypted = TextFileDecryptor.DecryptFile(filename);
                 //File.WriteAllBytes("c:\\temp\\dec.txt", decrypted);
                 _file = new StreamReader(new MemoryStream(decrypted));
             }

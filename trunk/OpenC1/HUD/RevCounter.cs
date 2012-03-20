@@ -29,8 +29,7 @@ namespace OpenC1.HUD
             else
             {
                 PixFile pix = new PixFile("hirestch.pix");
-                if (pix.Exists)
-                    _speedoTexture = pix.PixMaps[0].Texture;
+                _speedoTexture = pix.PixMaps[0].Texture;
             }
             _speedoLineTexture = TextureGenerator.Generate(new Color(255, 0, 0));            
         }
@@ -41,8 +40,7 @@ namespace OpenC1.HUD
 
         public override void Render()
         {
-            if (_speedoTexture != null)
-                Engine.SpriteBatch.Draw(_speedoTexture, ScaleRect(x, y, 0.145f, 0.16f), Color.White);
+            Engine.SpriteBatch.Draw(_speedoTexture, ScaleRect(x, y, 0.145f, 0.16f), Color.White);
 
             DrawShadow(ScaleRect(x + 0.06f, y + 0.112f, 0.03f, 0.057f));
             

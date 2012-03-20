@@ -22,7 +22,7 @@ namespace OpenC1
         List<NonCar> _nonCars;
         public RaceTimeController RaceTime;
         SkyBox _skybox;
-        public int NextCheckpoint = 0, CurrentLap, NbrDeadOpponents, NbrDeadPeds;
+        public int NextCheckpoint = 0, CurrentLap, NbrOpponents, NbrDeadOpponents, NbrDeadPeds;
         public Vehicle PlayerVehicle;
         public List<Opponent> Opponents = new List<Opponent>();
         public List<IDriver> Drivers = new List<IDriver>(); //opponent + player drivers
@@ -90,42 +90,37 @@ namespace OpenC1
                 _skybox.HeightOffset = -220 + ConfigFile.SkyboxPositionY * 1.5f;
             }
 
-            Physics.TrackProcessor.GenerateTrackActor(ConfigFile, _actors);
-            _nonCars = Physics.TrackProcessor.GenerateNonCars(_actors, ConfigFile.NonCars);
+            Physics.TrackProcessor.GenerateTrackActor(ConfigFile, _actors, out _nonCars);
+
+			Logger.Log("NonCars: " + _nonCars.Count);
 
             GridPlacer.Reset();
 
-            if (GameVars.Emulation == EmulationMode.Demo)
-            {
-                Opponents.Add(new Opponent("kutter.txt", ConfigFile.GridPosition, ConfigFile.GridDirection));
-                Opponents.Add(new Opponent("grimm.txt", ConfigFile.GridPosition, ConfigFile.GridDirection));
-                Opponents.Add(new Opponent("screwie.txt", ConfigFile.GridPosition, ConfigFile.GridDirection));
-                Opponents.Add(new Opponent("otis.txt", ConfigFile.GridPosition, ConfigFile.GridDirection));
-                Opponents.Add(new Opponent("dump.txt", ConfigFile.GridPosition, ConfigFile.GridDirection));
-            }
-            else
-            {
-                List<int> pickedNbrs = new List<int>();
-                for (int i = 0; i < 6; i++)
-                {
-                    int index = 0;
-                    while (true)
-                    {
-                        index = Engine.Random.Next(1, OpponentsFile.Instance.Opponents.Count);
-                        if (OpponentsFile.Instance.Opponents.Count <= 6)
-                        {
-                            break;
-                        }
-                        if (!pickedNbrs.Contains(index))
-                        {
-                            pickedNbrs.Add(index);
-                            break;
-                        }
-                    }
-                    Opponents.Add(new Opponent(OpponentsFile.Instance.Opponents[index].FileName, ConfigFile.GridPosition, ConfigFile.GridDirection));
-                }
-            }
-
+			List<int> opponentIds = new List<int>();
+			List<int> pickedNbrs = new List<int>();
+			for (int i = 0; i < 5; i++)
+			{
+				int index = 0;
+				while (true)
+				{
+					index = Engine.Random.Next(1, OpponentsFile.Instance.Opponents.Count);
+					if (!pickedNbrs.Contains(index))
+					{
+						pickedNbrs.Add(index);
+						break;
+					}
+				}
+				try
+				{
+					Opponents.Add(new Opponent(OpponentsFile.Instance.Opponents[index].FileName, ConfigFile.GridPosition, ConfigFile.GridDirection));
+					NbrOpponents++;
+				}
+				catch(Exception ex)
+				{
+					Logger.Log("Error while loading opponent " + OpponentsFile.Instance.Opponents[index].FileName + ", " + ex.Message);
+				}
+			}
+			
             foreach (CopStartPoint point in ConfigFile.CopStartPoints)
             {
                 Opponents.Add(new Opponent(point.IsSpecialForces ? "bigapc.txt" : "apc.txt", point.Position, 0, new CopDriver()));
@@ -166,7 +161,7 @@ namespace OpenC1
                 if (Engine.Camera is FixedChaseCamera)
                 {
                     float height = 55 - (RaceTime.CountdownTime * 35f);
-                    ((FixedChaseCamera)Engine.Camera).HeightOverride = Math.Max(0, height);
+                    ((FixedChaseCamera)Engine.Camera).MinHeight = Math.Max(0, height);
                 }
                 var closestPath = OpponentController.GetClosestPath(ConfigFile.GridPosition);
                 
@@ -219,6 +214,9 @@ namespace OpenC1
 
             if (Engine.Input.WasPressed(Keys.Tab))
                 _map.Show = !_map.Show;
+
+			if (Engine.Input.WasPressed(Keys.T))
+				RaceTime.TimeRemaining += 60;
         }
 
         public void Render()
@@ -310,12 +308,13 @@ namespace OpenC1
         {
             foreach (Opponent opponent in Opponents)
             {
-                if (opponent.Vehicle == vehicle)
-                {
-                    opponent.Kill();
-                    NbrDeadOpponents++;
-                    break;
-                }
+				if (opponent.Vehicle == vehicle)
+				{
+					opponent.Kill();
+					if (!(opponent.Driver is CopDriver))
+						NbrDeadOpponents++;
+					break;
+				}
             }
 
             int time = GeneralSettingsFile.Instance.TimePerCarKill[GameVars.SkillLevel];
@@ -345,14 +344,22 @@ namespace OpenC1
 
         public void OnPedestrianHit(Pedestrian ped, Vehicle vehicle)
         {
-            if (ped.IsHit) return;
+			vehicle.LastRunOverPedTime = Engine.TotalSeconds;
+			if (ped.IsHit)
+			{
+				SoundCache.Play(SoundIds.PedSquelch, vehicle, true);
+				return;
+			}
 
             NbrDeadPeds++;
             ped.OnHit(vehicle);
 
-            int time = GeneralSettingsFile.Instance.TimePerPedKill[GameVars.SkillLevel];
-            RaceTime.TimeRemaining += time;
-            MessageRenderer.Instance.PostTimerMessage(time);
+			if (vehicle == PlayerVehicle)
+			{
+				int time = GeneralSettingsFile.Instance.TimePerPedKill[GameVars.SkillLevel];
+				RaceTime.TimeRemaining += time;
+				MessageRenderer.Instance.PostTimerMessage(time);
+			}
 
             if (NbrDeadPeds == Peds.Count)
             {
@@ -360,5 +367,23 @@ namespace OpenC1
                 RaceTime.IsOver = true;
             }
         }
+
+		public void ExitAndReturnToMenu()
+		{
+			ResourceCache.Clear();
+			foreach (var d in Drivers)
+				d.Vehicle.Audio.Stop();
+
+			ParticleSystem.AllParticleSystems.Clear();
+			Race.Current = null;
+			PhysX.Instance.Delete();
+			var screen = Engine.Screen.Parent;
+			if (screen is PlayGameScreen)  //this will be true if called from the pause screen
+				screen = screen.Parent;
+
+			Engine.Screen = null;
+			GC.Collect();
+			Engine.Screen = screen;
+		}
     }
 }
