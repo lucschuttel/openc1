@@ -1,3 +1,8 @@
+@echo off
+echo * Make sure you have built OpenC1 in 'Release' mode *
+pause
+@echo on
+
 rmdir /S /Q ReleasePackage
 mkdir ReleasePackage
 xcopy /S OpenC1\bin\x86\Release\* ReleasePackage
